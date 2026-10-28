@@ -1,0 +1,51 @@
+{{define "content"}}
+<div class="page-head">
+  <h1>{{if .IsNew}}Add connection{{else}}Edit connection{{end}}</h1>
+  <a class="button" href="/">Back</a>
+</div>
+
+{{if .Errors}}
+<div class="flash err">
+  <ul>{{range .Errors}}<li>{{.}}</li>{{end}}</ul>
+</div>
+{{end}}
+
+<form method="post" action="{{if .IsNew}}/connections/new{{else}}/connections/{{.ID}}/edit{{end}}" class="card" autocomplete="off" data-connection-form data-connection-id="{{.ID}}">
+  <fieldset class="group">
+    <legend>Database server</legend>
+    <label>Display name <input type="text" name="name" value="{{.Name}}" required placeholder="Production shop"></label>
+    {{if not .IsNew}}<p class="hint">Backups for this connection are stored in <code>{{.Slug}}/</code>. Renaming does not move them.</p>{{end}}
+    <div class="row">
+      <label class="grow">Host <input type="text" name="host" value="{{.Host}}" required placeholder="db.example.com" spellcheck="false"></label>
+      <label class="short">Port <input type="number" name="port" value="{{.Port}}" min="1" max="65535" required></label>
+    </div>
+    <label>Database <input type="text" name="database" value="{{.Database}}" required spellcheck="false"></label>
+    <div class="row">
+      <label>Username <input type="text" name="username" value="{{.Username}}" required spellcheck="false" autocomplete="off"></label>
+      <label>Password
+        <input type="password" name="password" autocomplete="new-password" {{if .IsNew}}required{{else}}placeholder="(unchanged)"{{end}}>
+        {{if not .IsNew}}<span class="hint">Leave empty to keep the stored password.</span>{{end}}
+      </label>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" name="tls" {{if .TLS}}checked{{end}}> Use TLS <span class="muted">(encrypts the connection; the server certificate is not verified)</span></label>
+      <label class="check"><input type="checkbox" name="enabled" {{if .Enabled}}checked{{end}}> Scheduled backups enabled</label>
+    </div>
+    <div class="test-row">
+      <button type="button" data-test-connection>Test connection</button>
+      <span data-test-result class="test-result"></span>
+    </div>
+    <p class="hint">The database user only needs <code>SELECT, SHOW VIEW, TRIGGER, EVENT, PROCESS, LOCK TABLES</code>. This app never writes to your database.</p>
+  </fieldset>
+
+  {{template "schedule_fields" .Schedule}}
+  {{template "retention_fields" .Retention}}
+  {{template "naming_fields" .Naming}}
+
+  <p class="muted small">Schedule times are in {{.Timezone}}.</p>
+  <div class="form-actions">
+    <button type="submit" class="primary">{{if .IsNew}}Add connection{{else}}Save changes{{end}}</button>
+    <a class="button" href="/">Cancel</a>
+  </div>
+</form>
+{{end}}

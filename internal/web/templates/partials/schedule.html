@@ -1,0 +1,33 @@
+{{define "schedule_fields"}}
+<fieldset class="group" data-group="schedule">
+  <legend>Schedule</legend>
+  {{if .ShowInherit}}
+  <label class="check"><input type="checkbox" name="schedule_inherit" data-inherit="schedule" {{if .Inherit}}checked{{end}}>
+    Use global default <span class="muted">({{.DefaultDesc}})</span></label>
+  {{end}}
+  <div class="fields" data-inherit-target="schedule">
+    <label>Frequency
+      <select name="schedule_mode" data-schedule-mode>
+        {{$mode := .Schedule.Mode}}
+        {{range .Modes}}<option value="{{.}}" {{if eq . $mode}}selected{{end}}>{{modeLabel (printf "%s" .)}}</option>{{end}}
+      </select>
+    </label>
+    <label data-mode="every_n_hours">Every
+      <input type="number" name="schedule_every_hours" min="1" max="23" value="{{if .Schedule.EveryHours}}{{.Schedule.EveryHours}}{{else}}6{{end}}"> hours
+      <span class="hint">Counted from midnight: every 6 hours runs at 00:00, 06:00, 12:00, 18:00.</span>
+    </label>
+    <label data-mode="daily weekly">At time
+      <input type="time" name="schedule_time" value="{{if .Schedule.Time}}{{.Schedule.Time}}{{else}}02:00{{end}}">
+    </label>
+    <div data-mode="weekly" class="days">
+      <span>On</span>
+      {{$s := .Schedule}}
+      {{range seq 7}}<label class="check"><input type="checkbox" name="schedule_days" value="{{.}}" {{if $s.HasDay .}}checked{{end}}> {{dayName .}}</label>{{end}}
+    </div>
+    <label data-mode="cron">Cron expression
+      <input type="text" name="schedule_cron" value="{{.Schedule.Cron}}" placeholder="30 2 * * 1-5" spellcheck="false">
+      <span class="hint">Five fields: minute hour day-of-month month day-of-week.</span>
+    </label>
+  </div>
+</fieldset>
+{{end}}

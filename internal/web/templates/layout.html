@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}} · MariaDB Backup</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">MariaDB Backup</a>
+  {{if .LoggedIn}}
+  <nav>
+    <a href="/" {{if eq .Path "/"}}class="active"{{end}}>Connections</a>
+    <a href="/settings" {{if eq .Path "/settings"}}class="active"{{end}}>Settings</a>
+    <form method="post" action="/logout" class="inline"><button type="submit" class="link">Log out</button></form>
+  </nav>
+  {{end}}
+</header>
+<main class="container">
+  {{if .Flash}}<div class="flash ok">{{.Flash}}</div>{{end}}
+  {{if .FlashErr}}<div class="flash err">{{.FlashErr}}</div>{{end}}
+  {{template "content" .Data}}
+</main>
+<footer class="footer">MariaDB Backup {{.Version}} · read-only against your databases</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

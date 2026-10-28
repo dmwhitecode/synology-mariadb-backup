@@ -1,0 +1,32 @@
+{{define "naming_fields"}}
+<fieldset class="group" data-group="naming">
+  <legend>Filename</legend>
+  {{if .ShowInherit}}
+  <label class="check"><input type="checkbox" name="naming_inherit" data-inherit="naming" {{if .Inherit}}checked{{end}}>
+    Use global default <span class="muted">(e.g. {{.DefaultDesc}})</span></label>
+  {{end}}
+  <div class="fields" data-inherit-target="naming" data-naming>
+    <label class="check"><input type="checkbox" name="naming_use_db_name" {{if .Naming.UseDBName}}checked{{end}}> Use the database name as the base</label>
+    <label data-base-field>Custom base name
+      <input type="text" name="naming_base" value="{{.Naming.Base}}" placeholder="mybackup">
+    </label>
+    <div class="row">
+      <label>Prefix <input type="text" name="naming_prefix" value="{{.Naming.Prefix}}" placeholder="prod-"></label>
+      <label>Suffix <input type="text" name="naming_suffix" value="{{.Naming.Suffix}}" placeholder="-full"></label>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" name="naming_ts_prefix" {{if .Naming.TimestampPrefix}}checked{{end}}> Timestamp prefix</label>
+      <label class="check"><input type="checkbox" name="naming_ts_suffix" {{if .Naming.TimestampSuffix}}checked{{end}}> Timestamp suffix</label>
+    </div>
+    <label>Timestamp format
+      <input type="text" name="naming_ts_format" value="{{.Naming.TimestampFormat}}" placeholder="YYYY-MM-DD_HHmmss" spellcheck="false">
+      <span class="hint">Tokens: YYYY MM DD HH mm ss. Separators: - _ . T</span>
+    </label>
+    <div class="row">
+      <label class="check"><input type="checkbox" name="naming_gzip" {{if .Naming.Gzip}}checked{{end}}> Compress with gzip (.sql.gz)</label>
+      <label class="check"><input type="checkbox" name="naming_overwrite" {{if .Naming.Overwrite}}checked{{end}}> Overwrite mode (no timestamp, single file, no retention)</label>
+    </div>
+    <div class="preview">Preview: <code data-naming-preview>…</code></div>
+  </div>
+</fieldset>
+{{end}}

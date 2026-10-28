@@ -1,0 +1,32 @@
+{{define "content"}}
+<div class="page-head">
+  <h1>History: {{.Conn.Name}}</h1>
+  <div>
+    <form method="post" action="/connections/{{.Conn.ID}}/run" class="inline"><button type="submit">Run now</button></form>
+    <a class="button" href="/connections/{{.Conn.ID}}/edit">Edit</a>
+    <a class="button" href="/">Back</a>
+  </div>
+</div>
+<p class="muted"><code>{{.Conn.Host}}:{{.Conn.Port}}</code> · {{.Conn.Database}} · files under <code>{{.Conn.Slug}}/</code></p>
+
+{{if not .Runs}}
+<section class="card empty"><p>No runs yet.</p></section>
+{{else}}
+<table class="list">
+  <thead><tr><th>Started</th><th>Status</th><th>Trigger</th><th>Duration</th><th>File</th><th>Size</th><th>Message</th></tr></thead>
+  <tbody>
+  {{range .Runs}}
+    <tr>
+      <td>{{fmtTime .StartedAt}}</td>
+      <td><span class="badge {{statusClass .Status}}">{{.Status}}</span></td>
+      <td>{{.Trigger}}</td>
+      <td>{{fmtDuration .Duration}}</td>
+      <td>{{if .File}}<code>{{.File}}</code>{{else}}–{{end}}</td>
+      <td>{{if .Size}}{{humanSize .Size}}{{else}}–{{end}}</td>
+      <td class="error small">{{.Error}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}
+{{end}}

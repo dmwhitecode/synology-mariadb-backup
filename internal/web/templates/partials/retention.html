@@ -1,0 +1,15 @@
+{{define "retention_fields"}}
+<fieldset class="group" data-group="retention">
+  <legend>Retention</legend>
+  {{if .ShowInherit}}
+  <label class="check"><input type="checkbox" name="retention_inherit" data-inherit="retention" {{if .Inherit}}checked{{end}}>
+    Use global default <span class="muted">(keep {{.DefaultKeep}})</span></label>
+  {{end}}
+  <div class="fields" data-inherit-target="retention">
+    <label>Versions to keep
+      <input type="number" name="retention_keep" min="1" max="10000" value="{{.Keep}}">
+      <span class="hint">After each successful backup, older files beyond this count are deleted. The file just written is never deleted.</span>
+    </label>
+  </div>
+</fieldset>
+{{end}}

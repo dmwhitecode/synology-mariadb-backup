@@ -1,0 +1,20 @@
+# Build output
+/bin/
+/dist/
+*.exe
+
+# Runtime data (never commit keys, databases or dumps)
+/data/
+/backups/
+*.key
+*.db
+*.db-wal
+*.db-shm
+*.sql
+*.sql.gz
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

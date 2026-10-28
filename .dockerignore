@@ -1,0 +1,11 @@
+.git
+.github
+.vscode
+.idea
+data
+backups
+bin
+dist
+*.md
+!README.md
+docker-compose.yml

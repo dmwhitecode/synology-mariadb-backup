@@ -1,0 +1,35 @@
+# Install through DSM Container Manager → Project → Create, paste this file.
+#
+# Before starting:
+#   1. Create the two host folders below (File Station) and give the
+#      container user write access. Easiest: set `user:` to your own DSM
+#      account's UID:GID (see README) so the backups land as your user.
+#   2. Open http://<nas-ip>:8080 and complete first-run setup.
+#   3. Optional but recommended: put it behind DSM's reverse proxy with HTTPS.
+
+services:
+  mariadb-backup:
+    image: ghcr.io/dmwhitecode/synology-mariadb-backup:latest
+    # Or build locally instead of pulling:
+    # build: .
+    container_name: mariadb-backup
+    restart: unless-stopped
+    # UID:GID that owns the host folders. 1026:100 is the first DSM user on
+    # most installs; check with `id <user>` over SSH.
+    user: "1026:100"
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: Europe/London
+      LOG_LEVEL: info
+    volumes:
+      - /volume1/docker/mariadb-backup/data:/data
+      - /volume1/backups/mariadb:/backups
+    # The app only needs outbound access to your database servers.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

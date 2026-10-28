@@ -1,0 +1,48 @@
+{{define "content"}}
+<div class="page-head">
+  <h1>Connections</h1>
+  <a class="button primary" href="/connections/new">Add connection</a>
+</div>
+<p class="muted">Backups are written under <code>{{.BackupRoot}}</code>. Times shown in {{.Timezone}}.</p>
+
+{{if not .Rows}}
+<section class="card empty">
+  <p>No connections yet. Add a remote MariaDB database to start backing it up.</p>
+</section>
+{{else}}
+<table class="list">
+  <thead>
+    <tr><th>Name</th><th>Server</th><th>Schedule</th><th>Last run</th><th>Next run</th><th></th></tr>
+  </thead>
+  <tbody>
+  {{range .Rows}}
+    <tr class="{{if not .Conn.Enabled}}disabled{{end}}">
+      <td>
+        <strong>{{.Conn.Name}}</strong>
+        {{if not .Conn.Enabled}}<span class="badge">disabled</span>{{end}}
+        {{if .Running}}<span class="badge status-running">running</span>{{end}}
+        <div class="muted small">keep {{.Retention}} · {{.Conn.Slug}}/</div>
+      </td>
+      <td><code>{{.Conn.Host}}:{{.Conn.Port}}</code><div class="muted small">{{.Conn.Database}} as {{.Conn.Username}}{{if .Conn.TLS}} · TLS{{end}}</div></td>
+      <td>{{.ScheduleDesc}}</td>
+      <td>
+        {{if .Last}}
+          <span class="badge {{statusClass .Last.Status}}">{{.Last.Status}}</span>
+          <div class="muted small">{{fmtTime .Last.StartedAt}}{{if .Last.Size}} · {{humanSize .Last.Size}}{{end}}</div>
+          {{if .Last.Error}}<div class="error small" title="{{.Last.Error}}">{{.Last.Error}}</div>{{end}}
+        {{else}}<span class="muted">never</span>{{end}}
+      </td>
+      <td>{{if .Conn.Enabled}}{{fmtTime .Next}}{{else}}<span class="muted">–</span>{{end}}</td>
+      <td class="actions">
+        <form method="post" action="/connections/{{.Conn.ID}}/run" class="inline"><button type="submit" {{if .Running}}disabled{{end}}>Run now</button></form>
+        <a class="button" href="/connections/{{.Conn.ID}}/edit">Edit</a>
+        <a class="button" href="/connections/{{.Conn.ID}}/runs">History</a>
+        <form method="post" action="/connections/{{.Conn.ID}}/toggle" class="inline"><button type="submit">{{if .Conn.Enabled}}Disable{{else}}Enable{{end}}</button></form>
+        <form method="post" action="/connections/{{.Conn.ID}}/delete" class="inline" data-confirm="Delete connection &quot;{{.Conn.Name}}&quot;? Existing backup files are kept."><button type="submit" class="danger">Delete</button></form>
+      </td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}
+{{end}}
